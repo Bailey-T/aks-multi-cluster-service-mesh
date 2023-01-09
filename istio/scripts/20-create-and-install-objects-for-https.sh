@@ -24,5 +24,6 @@ istioctl install -y \
   -f 001-accessLogFile.yaml \
   -f 002-multicluster-region-one.yaml \
   -f 003-istiod-csi-secrets.yaml \
-  -f 004-ingress-gateway-csi.yaml # <-- note the "-csi" file
+  -f 004-ingress-gateway-csi.yaml \
+  -f 006-dns-proxy.yaml
 )

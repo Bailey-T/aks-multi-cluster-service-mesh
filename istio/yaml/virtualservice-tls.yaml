@@ -8,6 +8,7 @@ metadata:
 spec:
   hosts:
     - 'echoserver.echoserver.svc.cluster.local'
+    - 'echoserver.echoserver.global'
   gateways:
     - istio-ingress/istio-ingressgateway
   http:

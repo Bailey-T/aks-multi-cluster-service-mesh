@@ -14,3 +14,5 @@ az aks get-credentials \
   --resource-group $aksClusterTwoResourceGroupName \
   --name $aksClusterTwoName \
   --overwrite-existing
+
+kubelogin convert-kubeconfig

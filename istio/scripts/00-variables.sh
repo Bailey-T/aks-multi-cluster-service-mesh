@@ -1,10 +1,10 @@
 # Variables
 
 # Edit the following
-prefix="<resource-prefix>"
-aksClusterOneLocation="<aks-location-one>"
-aksClusterTwoLocation="<aks-location-two>"
-sharedResourceGroupLocation="<shared-resource-group-location>"
+prefix="oyeunv"
+aksClusterOneLocation="uksouth"
+aksClusterTwoLocation="uksouth"
+sharedResourceGroupLocation="uksouth"
 
 # Edit if you want to modify this project to add new features:
 aksClusterOneName="$prefix-$aksClusterOneLocation-aks-one"
@@ -14,17 +14,18 @@ aksClusterTwoResourceGroupName="$prefix-$aksClusterTwoLocation-two-rg"
 sharedResourceGroupName="$prefix-$sharedResourceGroupLocation-shared-rg"
 terraformDirectory=".."
 certsDir="../certificates"
-tag="1.14.4"
+tag="1.16.1"
 istioDir="../istio-$tag"
 yamlDir="../yaml"
 clusters=($aksClusterOneName $aksClusterTwoName)
-istioRevision="1-14-4"
+istioRevision="1-16-1"
 yamlDir="../yaml"
-namespace="echoserver"
+namespace="curlserver"
 podName="curlclient"
 containerName="curlclient"
 imageName="nginx"
-command="curl echoserver:8080"
+command="curl echoserver.echoserver.svc.cluster.local:8080"
+command2="curl 20.108.76.19.nip.io"
 certificateName="frontend-certificate"
 applicationGatewayName="aks-appgw-$aksClusterOneLocation"
 rootCertificateName="root-certificate"

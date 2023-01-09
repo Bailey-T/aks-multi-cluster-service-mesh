@@ -9,7 +9,7 @@ spec:
   hosts:
     - x.x.x.x.nip.io
   gateways:
-    - istio-ingress/istio-ingressgateway
+    - istio-ingress/istio-echoserver-1
   http:
   - match:
     - uri:

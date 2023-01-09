@@ -1,11 +1,11 @@
 apiVersion: networking.istio.io/v1beta1
 kind: Gateway
 metadata:
-  name: istio-ingressgateway
+  name: istio-echoserver-1
   namespace: istio-ingress
 spec:
   selector:
-    app: istio-ingressgateway
+    app: eastwestgateway
   servers:
   - port:
       number: 80

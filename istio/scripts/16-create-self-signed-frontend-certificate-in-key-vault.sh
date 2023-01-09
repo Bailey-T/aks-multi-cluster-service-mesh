@@ -3,8 +3,6 @@
 # Variables
 source ./00-variables.sh
 
-sharedResourceGroupLocation="westeurope"
-sharedResourceGroupName="$prefix-$sharedResourceGroupLocation-shared-rg"
 certificateName="frontend-certificate"
 
 # Retrieve Azure Key Vault name from the shared resource group

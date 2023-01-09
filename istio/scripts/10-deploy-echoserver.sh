@@ -13,10 +13,10 @@ kubectl label --context=$aksClusterOneName namespace echoserver istio.io/rev=$is
 kubectl apply --context=$aksClusterOneName -n echoserver -f $yamlDir/echoserver.yaml -f $yamlDir/echoserver-svc.yaml
 
 # Create echoserver namespace in the second cluster
-kubectl create --context=$aksClusterTwoName namespace echoserver
+kubectl create --context=$aksClusterTwoName namespace curlserver
 
 # Enable automatic Istio sidecar injection for the echoserver namespace in the second cluster
-kubectl label --context=$aksClusterTwoName namespace echoserver istio.io/rev=$istioRevision
+kubectl label --context=$aksClusterTwoName namespace curlserver istio.io/rev=$istioRevision
 
 # Create the echoserver service in the echoserver namespace in the second cluster
-kubectl apply --context=$aksClusterTwoName -n echoserver -f $yamlDir/echoserver-svc.yaml
+kubectl apply --context=$aksClusterTwoName -n curlserver -f $yamlDir/echoserver-svc.yaml

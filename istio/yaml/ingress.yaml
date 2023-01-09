@@ -13,6 +13,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: ingressgateway
+            name: eastwestgateway
             port:
               number: 80

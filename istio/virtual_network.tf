@@ -5,6 +5,7 @@ module "network_one" {
   address_spaces      = var.vnet_one_address_space
   subnet_prefixes     = var.vnet_one_subnet_prefixes
   subnet_names        = var.vnet_one_subnet_names
+  use_for_each        = false
   depends_on          = [azurerm_resource_group.resource_group_one]
   subnet_enforce_private_link_endpoint_network_policies = {
     "subnet1" : true
@@ -18,6 +19,7 @@ module "network_two" {
   address_spaces      = var.vnet_two_address_space
   subnet_prefixes     = var.vnet_two_subnet_prefixes
   subnet_names        = var.vnet_two_subnet_names
+  use_for_each        = false
   depends_on          = [azurerm_resource_group.resource_group_two]
   subnet_enforce_private_link_endpoint_network_policies = {
     "subnet1" : true
