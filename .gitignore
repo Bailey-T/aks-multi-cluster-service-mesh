@@ -354,3 +354,4 @@ MigrationBackup/
 istio/certificates
 istio/istio-*
 terraform.tfstate
+.terraform.tfstate.lock.info

@@ -1,0 +1,29 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: echoserver-remote
+spec:
+  hosts:
+    - echoserver.echoserver.global
+  location: MESH_INTERNAL
+  ports:
+    - name: http1
+      number: 8080
+      protocol: http
+  resolution: DNS
+  endpoints:
+    - address: 172.16.201.192
+      labels:
+        cluster: aks-cluster-one
+      ports:
+        http1: 15443 # Do not change this port value
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: echoserver-remote
+spec:
+  host: echoserver.echoserver.global
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
