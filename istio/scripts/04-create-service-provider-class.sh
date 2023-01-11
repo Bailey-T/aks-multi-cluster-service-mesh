@@ -8,6 +8,11 @@ for cluster in ${clusters[@]} ; do
   kubectl create --context=$cluster namespace istio-system
 done
 
+# Namespace Network Label
+kubectl label --context=$aksClusterOneName namespace istio-system topology.istio.io/network=network1 --overwrite
+# Namespace Network Label
+kubectl label --context=$aksClusterTwoName namespace istio-system topology.istio.io/network=network2 --overwrite
+
 # Change the working directory to the Terraform folder
 (
 cd $terraformDirectory

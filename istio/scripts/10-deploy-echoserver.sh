@@ -19,4 +19,4 @@ kubectl create --context=$aksClusterTwoName namespace curlserver
 kubectl label --context=$aksClusterTwoName namespace curlserver istio.io/rev=$istioRevision
 
 # Create the echoserver service in the echoserver namespace in the second cluster
-kubectl apply --context=$aksClusterTwoName -n curlserver -f $yamlDir/echoserver-svc.yaml
+#kubectl apply --context=$aksClusterTwoName -n curlserver -f $yamlDir/echoserver-svc.yaml

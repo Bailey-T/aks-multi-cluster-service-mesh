@@ -16,6 +16,5 @@ kubectl delete ns --context=$aksClusterTwoName istio-ingress
 kubectl delete ns --context=$aksClusterTwoName istio-system
 kubectl delete ns --context=$aksClusterTwoName curlserver
 
-kubectl delete secret istio-remote-secret-$aksClusterTwoName --context $aksClusterOneName
-kubectl delete secret istio-remote-secret-$aksClusterOneName --context $aksClusterTwoName
+
 )

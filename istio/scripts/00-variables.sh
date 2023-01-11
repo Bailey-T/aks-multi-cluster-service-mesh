@@ -1,7 +1,7 @@
 # Variables
 
 # Edit the following
-prefix="oyeunv"
+prefix="tmxjet"
 aksClusterOneLocation="uksouth"
 aksClusterTwoLocation="uksouth"
 sharedResourceGroupLocation="uksouth"
@@ -24,8 +24,7 @@ namespace="curlserver"
 podName="curlclient"
 containerName="curlclient"
 imageName="nginx"
-command="curl echoserver.echoserver.svc.cluster.local:8080"
-command2="curl 20.108.76.19.nip.io"
+command="curl echoserver.echoserver.global"
 certificateName="frontend-certificate"
 applicationGatewayName="aks-appgw-$aksClusterOneLocation"
 rootCertificateName="root-certificate"

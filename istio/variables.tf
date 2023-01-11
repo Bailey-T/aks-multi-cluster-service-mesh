@@ -328,13 +328,13 @@ variable "ingress_application_gateway_name" {
 variable "net_profile_dns_service_ip" {
   description = "(Optional) IP address within the Kubernetes service address range that will be used by cluster service discovery (kube-dns). Changing this forces a new resource to be created."
   type        = string
-  default     = "172.16.0.10"
+  default     = null
 }
 
 variable "net_profile_docker_bridge_cidr" {
   description = "(Optional) IP address (in CIDR notation) used as the Docker bridge IP address on nodes. Changing this forces a new resource to be created."
   type        = string
-  default     = "172.17.0.1/16"
+  default     = null
 }
 
 variable "net_profile_outbound_type" {
@@ -352,7 +352,7 @@ variable "net_profile_pod_cidr" {
 variable "net_profile_service_cidr" {
   description = "(Optional) The Network Range used by the Kubernetes service. Changing this forces a new resource to be created."
   type        = string
-  default     = "172.16.0.0/16"
+  default     = null
 }
 
 variable "key_vault_secrets_provider_enabled" {

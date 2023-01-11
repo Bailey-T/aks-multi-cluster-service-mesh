@@ -55,6 +55,9 @@ spec:
             value: network2
         service:
           type: ClusterIP
+        #  type: LoadBalancer
+        #serviceAnnotations:
+        # service.beta.kubernetes.io/azure-load-balancer-internal: "true"
         strategy:
           rollingUpdate:
             maxSurge: 100%
@@ -87,4 +90,6 @@ spec:
       istio-ingressgateway:
         # Enable gateway injection
         injectionTemplate: gateway
+    global:
+      network: network2
 

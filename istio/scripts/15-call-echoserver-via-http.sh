@@ -24,7 +24,7 @@ else
 fi
 
 # Invoke the echoserver as a local service
-kubectl exec -it $podName --context=$aksClusterTwoName --namespace $namespace --container $containerName -- $command2
+kubectl exec -it $podName --context=$aksClusterTwoName --namespace $namespace --container $containerName -- $command
 
 # Delete the pod
 #kubectl delete pod $podName --context=$aksClusterTwoName --namespace $namespace

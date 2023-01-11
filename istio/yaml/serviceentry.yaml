@@ -1,0 +1,30 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: echoserver
+  namespace: curlserver
+spec:
+  exportTo:
+    - '.'
+  hosts:
+  # must be of form name.namespace.global
+  - echoserver.echoserver.global
+  # Treat remote cluster services as part of the service mesh
+  # as all clusters in the service mesh share the same root of trust.
+  location: MESH_INTERNAL
+  ports:
+  - name: http
+    number: 80
+    protocol: http
+  resolution: STATIC
+  endpoints:
+  # This is the routable address of the ingress gateway in cluster2 that
+  # sits in front of sleep.foo service. Traffic from the sidecar will be
+  # routed to this address.
+  - address: 172.16.80.77
+    network: network1
+    labels:
+      cluster: aks-cluster-one
+    ports:
+      http: 15443 # Do not change this port value
+

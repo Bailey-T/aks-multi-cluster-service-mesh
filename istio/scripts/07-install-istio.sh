@@ -20,6 +20,18 @@ istioctl install -y \
   -f 005-aks-affinity.yaml \
   -f 006-dns-proxy.yaml
 
+# Apply Strict Inbound MTLS
+kubectl apply --context $aksClusterOneName -f - <<EOF
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: "default"
+  namespace: "istio-system"
+spec:
+  mtls:
+    mode: STRICT
+EOF
+
 # Install Istio on cluster two
 istioctl install -y \
   --context=$aksClusterTwoName \
@@ -32,5 +44,17 @@ istioctl install -y \
   -f 004-ingress-gateway-2.yaml \
   -f 005-aks-affinity.yaml \
   -f 006-dns-proxy.yaml
+
+# Apply Strict Inbound MTLS
+kubectl apply --context $aksClusterTwoName -f - <<EOF
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: "default"
+  namespace: "istio-system"
+spec:
+  mtls:
+    mode: STRICT
+EOF
 
 )
