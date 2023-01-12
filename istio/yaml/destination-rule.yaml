@@ -24,11 +24,14 @@ metadata:
   name: egressgateway-for-echoserver
   namespace: curlserver
 spec:
-  host: eastwestgateway.istio-ingress.svc.cluster.local
+  host: echoserver.echoserver.svc.cluster.local
   subsets:
-  - name: echoserver
+  - name: echoserver-1
     labels:
-      cluster: aks-cluster-one
+      topology.istio.io/cluster: aks-cluster-one
+  - name: echoserver-2
+    labels:
+      topology.istio.io/cluster: aks-cluster-two
   trafficPolicy:
     tls:
       mode: ISTIO_MUTUAL
@@ -39,21 +42,24 @@ metadata:
   name: echoserver-through-eastwest-gateway
   namespace: curlserver
 spec:
-  exportTo:
-    - '.'
+  #exportTo:
+  #  - '.'
   hosts:
-  - "echoserver.echoserver.global"
-  gateways:
-  - mesh
+  - "echoserver.echoserver.svc.cluster.local"
   http:
-  - match:
-    - gateways:
-      - mesh
-      port: 80
+  - name: "cluster-1-local"
+    match:
+    - sourceLabels:
+        topology.istio.io/cluster: "cluster-1"
     route:
     - destination:
-        host: eastwestgateway.istio-ingress.svc.cluster.local
-        subset: echoserver
-        port:
-          number: 15443
-      weight: 100
+        host: echoserver.echoserver.svc.cluster.local
+        subset: echoserver-1
+  - name: "cluster-2-local"
+    match:
+    - sourceLabels:
+        topology.istio.io/cluster: "cluster-2"
+    route:
+    - destination:
+        host: echoserver.echoserver.svc.cluster.local
+        subset: echoserver-1

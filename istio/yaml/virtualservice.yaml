@@ -3,31 +3,13 @@
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: echoserver-internal
-  namespace: echoserver
-spec:
-  hosts:
-    - '*'
-  gateways:
-    - istio-ingress/echoserver-internal
-  http:
-  - match:
-    - uri:
-        prefix: "/"
-    route:
-    - destination:
-        host: echoserver.echoserver.svc.cluster.local
----
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
   name: echoserver-external
   namespace: echoserver
 spec:
   hosts:
-    - '*'
+    - 'x.x.x.x.nip.io'
   gateways:
-    - istio-ingress/echoserver-external
+    - echoserver/echoserver-external
   http:
   - match:
     - uri:

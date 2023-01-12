@@ -10,10 +10,22 @@ spec:
     ingressGateways:
     - name: ingressgateway
       namespace: istio-ingress
+      label:
+        # Set a unique label for the gateway. This is required to ensure Gateways
+        # can select this workload
+        istio: ingressgateway
       enabled: true
       k8s:
         service:
-          type: ClusterIP
+          #type: ClusterIP
+          type: LoadBalancer
+        serviceAnnotations:
+          service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+        tolerations:
+          - key: "CriticalAddonsOnly"
+            operator: "Equal"
+            value: "true"
+            effect: "NoSchedule"
         affinity:
           nodeAffinity:
             preferredDuringSchedulingIgnoredDuringExecution:
@@ -37,16 +49,11 @@ spec:
                   operator: In
                   values:
                   - linux
-      label:
-        # Set a unique label for the gateway. This is required to ensure Gateways
-        # can select this workload
-        istio: ingressgateway
     - name: eastwestgateway
       namespace: istio-ingress
       label:
         istio: eastwestgateway
         app: eastwestgateway
-        topology.istio.io/network: network1
       enabled: true
       k8s:
         env:
@@ -54,10 +61,10 @@ spec:
           - name: ISTIO_META_REQUESTED_NETWORK_VIEW
             value: network1
         service:
-          type: ClusterIP
-        #  type: LoadBalancer
-        #serviceAnnotations:
-        # service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+          #type: ClusterIP
+          type: LoadBalancer
+        serviceAnnotations:
+          service.beta.kubernetes.io/azure-load-balancer-internal: "true"
         strategy:
           rollingUpdate:
             maxSurge: 100%

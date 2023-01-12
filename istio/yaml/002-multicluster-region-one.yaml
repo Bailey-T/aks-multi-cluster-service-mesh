@@ -6,4 +6,5 @@ spec:
       meshID: azure
       multiCluster:
         clusterName: aks-cluster-one
+        enabled: true
       network: network1

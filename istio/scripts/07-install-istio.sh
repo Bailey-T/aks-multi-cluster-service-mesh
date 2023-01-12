@@ -20,17 +20,6 @@ istioctl install -y \
   -f 005-aks-affinity.yaml \
   -f 006-dns-proxy.yaml
 
-# Apply Strict Inbound MTLS
-kubectl apply --context $aksClusterOneName -f - <<EOF
-apiVersion: security.istio.io/v1beta1
-kind: PeerAuthentication
-metadata:
-  name: "default"
-  namespace: "istio-system"
-spec:
-  mtls:
-    mode: STRICT
-EOF
 
 # Install Istio on cluster two
 istioctl install -y \
@@ -45,16 +34,11 @@ istioctl install -y \
   -f 005-aks-affinity.yaml \
   -f 006-dns-proxy.yaml
 
+
 # Apply Strict Inbound MTLS
-kubectl apply --context $aksClusterTwoName -f - <<EOF
-apiVersion: security.istio.io/v1beta1
-kind: PeerAuthentication
-metadata:
-  name: "default"
-  namespace: "istio-system"
-spec:
-  mtls:
-    mode: STRICT
-EOF
+# Sleep is to wait for CRDs to settle
+sleep 5
+kubectl apply --context $aksClusterOneName -f peerAuthentication.yaml
+kubectl apply --context $aksClusterTwoName -f peerAuthentication.yaml
 
 )

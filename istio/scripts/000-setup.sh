@@ -10,8 +10,8 @@ bash 07-install-istio.sh
 #bash 09-validate-istio-multicluster.sh
 bash 10-deploy-echoserver.sh
 #bash 11-call-echoserver-service-from-cluster-two.sh
-#bash 12-deploy-ingress-and-gateway.sh
+bash 12-deploy-ingress-and-gateway.sh
 #bash 13-call-echoserver-without-virtual-service.sh
-#bash 14-deploy-virtual-service.sh
+bash 14-deploy-virtual-service.sh
 #bash 15-call-echoserver-via-http.sh
 )
