@@ -1,0 +1,19 @@
+# https://istio.io/latest/docs/tasks/traffic-management/ingress/ingress-control/#configuring-ingress-using-an-istio-gateway
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: echoserver-internal
+  namespace: echoserver
+spec:
+  hosts:
+    - echoserver.echoserver.svc.cluster.local
+  gateways:
+    - echoserver/echoserver-external
+  http:
+  - match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        host: echoserver.echoserver.svc.cluster.local

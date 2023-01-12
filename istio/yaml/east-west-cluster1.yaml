@@ -1,37 +1,44 @@
 # https://istio.io/latest/docs/tasks/traffic-management/ingress/ingress-control/#configuring-ingress-using-an-istio-gateway
 ---
-apiVersion: networking.istio.io/v1beta1
-kind: Gateway
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
 metadata:
-  name: echoserver-internal
+  name: cross-cluster-traffic
   namespace: istio-ingress
 spec:
-  selector:
-    istio: eastwestgateway
-  servers:
-  - port:
-      number: 80
-      name: http
-      protocol: HTTP
-    hosts:
-    - '*'
+  configPatches:
+  - applyTo: NETWORK_FILTER
+    match:
+      context: GATEWAY
+      listener:
+        filterChain:
+          filter:
+            name: envoy.filters.network.sni_cluster
+        portNumber: 15443
+    patch:
+      operation: INSERT_AFTER
+      value:
+        name: envoy.filters.network.tcp_cluster_rewrite
+        typed_config:
+          '@type': type.googleapis.com/istio.envoy.config.filter.network.tcp_cluster_rewrite.v2alpha1.TcpClusterRewrite
+          cluster_pattern: \.aks-cluster-one.global$
+          cluster_replacement: .cluster.local
+  workloadSelector:
+    labels:
+      istio: eastwestgateway
 ---
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
 metadata:
-  name: echoserver-internal
+  name: echoserver.remote
   namespace: echoserver
 spec:
-  hosts:
-    - 'echoserver.echoserver.svc.cluster.local'
-  gateways:
-    - mesh
-    - echoserver/echoserver-internal
-  http:
-  - match:
-    - uri:
-        prefix: "/"
-    route:
-    - destination:
-        host: echoserver.echoserver.svc.cluster.local
+  host: echoserver.echoserver.svc.cluster.local
+  subsets:
+  - name: echoserver-aks-cluster-one
+    labels:
+      cluster: aks-cluster-one
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
 ---

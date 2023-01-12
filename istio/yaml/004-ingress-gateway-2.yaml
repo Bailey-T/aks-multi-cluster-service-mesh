@@ -19,8 +19,8 @@ spec:
         service:
           #type: ClusterIP
           type: LoadBalancer
-        serviceAnnotations:
-          service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+        #serviceAnnotations:
+        #  service.beta.kubernetes.io/azure-load-balancer-internal: "true"
         strategy:
           rollingUpdate:
             maxSurge: 100%
@@ -68,8 +68,8 @@ spec:
         service:
           #type: ClusterIP
           type: LoadBalancer
-        serviceAnnotations:
-          service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+        #serviceAnnotations:
+        #  service.beta.kubernetes.io/azure-load-balancer-internal: "true"
         strategy:
           rollingUpdate:
             maxSurge: 100%
