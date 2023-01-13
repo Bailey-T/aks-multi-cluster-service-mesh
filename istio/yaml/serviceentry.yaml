@@ -1,14 +1,14 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
 metadata:
-  name: echoserver.echoserver.svc.aks-cluster-one.global
+  name: echoserver.echoserver.svc.cluster.local
   namespace: curlserver
 spec:
-  #exportTo:
-  #  - '.'
+  exportTo:
+    - '.'
   hosts:
   # must be of form name.namespace.global
-  - echoserver.echoserver.svc.aks-cluster-one.global
+  - echoserver.echoserver.svc.cluster.local
   # Treat remote cluster services as part of the service mesh
   # as all clusters in the service mesh share the same root of trust.
   location: MESH_INTERNAL
@@ -21,38 +21,7 @@ spec:
   # This is the routable address of the ingress gateway in cluster2 that
   # sits in front of sleep.foo service. Traffic from the sidecar will be
   # routed to this address.
-  - address: 20.108.234.162
+  - address: 20.108.118.25
+    network: network1 
     labels:
       cluster: aks-cluster-one
-    ports:
-      http: 15443 # Do not change this port value
----
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: echoserver.echoserver.svc.aks-cluster-one.global
-  namespace: curlserver
-spec:
-  host: echoserver.echoserver.svc.aks-cluster-one.global
-  subsets:
-  - name: echoserver-aks-cluster-one
-    labels:
-      cluster: aks-cluster-one
-  trafficPolicy:
-    tls:
-      mode: ISTIO_MUTUAL
----
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: echoserver
-  namespace: curlserver
-spec:
-  hosts:
-  - echoserver.echoserver.svc.aks-cluster-one.global
-  http:
-  - route:
-    - destination:
-        host: echoserver.echoserver.svc.aks-cluster-one.global
-        subset: echoserver-aks-cluster-one
-      weight: 100
