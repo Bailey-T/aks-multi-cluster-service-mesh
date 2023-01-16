@@ -1,3 +1,5 @@
+#
+---
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
 metadata:
@@ -21,7 +23,7 @@ spec:
   # This is the routable address of the ingress gateway in cluster2 that
   # sits in front of sleep.foo service. Traffic from the sidecar will be
   # routed to this address.
-  - address: 20.108.118.25
+  - address: x.x.x.x
     network: network1 
     labels:
       cluster: aks-cluster-one
