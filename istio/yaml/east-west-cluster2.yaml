@@ -17,23 +17,26 @@ spec:
   ports:
   - name: http
     number: 80
-    protocol: http
+    protocol: HTTP
+  - name: https
+    number: 443
+    protocol: HTTPS
   resolution: DNS
   endpoints:
   # This is the routable address of the ingress gateway in cluster2 that
   # sits in front of the service. Traffic from the sidecar will be
   # routed to this address.
   - address: 20.49.153.228
-    ports:
-      http: 15443
-    network: network1 
-    labels:
-      cluster: aks-cluster-one
-  - address: eastwestgateway.istio-system.svc.cluster.local
-    ports:
-      http: 15443
-    labels:
-      cluster: aks-cluster-one
+  #  ports:
+  #    http: 15443
+  #  network: network1 
+  #  labels:
+  #    cluster: aks-cluster-one
+  #- address: eastwestgateway.istio-system.svc.cluster.local
+  #  ports:
+  #    http: 15443
+  #  labels:
+  #    cluster: aks-cluster-one
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: Gateway
@@ -45,11 +48,11 @@ spec:
     istio: eastwestgateway
   servers:
   - port:
-      number: 80
+      number: 443
       name: http
-      protocol: HTTP
-    #tls:
-    #    mode: ISTIO_MUTUAL
+      protocol: HTTPS
+    tls:
+        mode: ISTIO_MUTUAL
     hosts:
     - 'echoserver.echoserver.svc.cluster.local'
 ---
@@ -59,17 +62,34 @@ metadata:
   name: egressgateway-for-echoserver
   namespace: curlserver
 spec:
-  host: echoserver.echoserver.svc.cluster.local
+  host: eastwestgateway.istio-ingress.svc.cluster.local
   subsets:
   - name: echoserver-eastwest-aks-cluster-one
-    labels:
-      cluster: aks-cluster-one
+    #labels:
+    #  cluster: aks-cluster-one
   trafficPolicy:
     loadBalancer:
       simple: ROUND_ROBIN
     portLevelSettings:
     - port:
-        number: 80
+        number: 443
+      tls:
+        mode: ISTIO_MUTUAL
+        sni: echoserver.echoserver.svc.cluster.local
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: originate-tls-for-echoserver
+  namespace: curlserver
+spec:
+  host: echoserver.echoserver.svc.cluster.local
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+    portLevelSettings:
+    - port:
+        number: 443
       tls:
         mode: ISTIO_MUTUAL
         sni: echoserver.echoserver.svc.cluster.local
@@ -85,8 +105,8 @@ spec:
   hosts:
   - "echoserver.echoserver.svc.cluster.local"
   gateways:
-  - mesh
   - curlserver/echoserver-mtls
+  - mesh
   http:
     # naming matches is super handy for tracing back in the envoy logs
   - name: "eastwest-routing-internal"
@@ -94,20 +114,22 @@ spec:
     - gateways:
       # All requests from within this mesh should go to the egressGateway.local
       - mesh
+      port: 80
     route:
     - destination:
         host: eastwestgateway.istio-ingress.svc.cluster.local
+        subset: echoserver-eastwest-aks-cluster-one
         port: 
           # Typically use 80 from all EnvoyProxy sidecar of source pod to the mesh EgressGateway
-          number: 80
+          number: 443
   - name: "eastwest-routing-external"
     match:
     - gateways:
       # All requests from below EgressGateway.local should go to the external endpoint defined in ServiceEntry
       - curlserver/echoserver-mtls
+      port: 443
     route:
     - destination:
         host: echoserver.echoserver.svc.cluster.local # The external service endpoint specified in ServiceEntry
-        subset: echoserver-eastwest-aks-cluster-one
         port: 
-          number: 80
+          number: 443
