@@ -1,0 +1,79 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: echoserver.echoserver.svc.cluster.local
+  namespace: curlserver
+spec:
+  exportTo:
+    - '.'
+  hosts:
+  # must be of form name.namespace.global
+  - echoserver.echoserver.svc.cluster.local
+  # Treat remote cluster services as part of the service mesh
+  # as all clusters in the service mesh share the same root of trust.
+  location: MESH_INTERNAL
+  ports:
+  - name: https
+    number: 443
+    protocol: TLS
+  resolution: DNS
+  endpoints:
+  # This is the routable address of the ingress gateway in cluster2 that
+  # sits in front of sleep.foo service. Traffic from the sidecar will be
+  # routed to this address.
+  - address: 20.26.9.36
+    labels:
+      network: network1 
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: echoserver-egress
+  namespace: curlserver
+spec:
+    host: “echoserver.echoserver.svc.cluster.local”
+    subsets:
+      - name: “http-egress-subset”
+    trafficPolicy:
+     loadBalancer:
+       simple: ROUND_ROBIN
+     portLevelSettings:
+      - port:
+          number: 443
+        tls:
+          mode: ISTIO_MUTUAL
+          sni: echoserver.echoserver.svc.cluster.local
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: gateway-routing
+  namespace: curlserver
+spec:
+  hosts:
+  - echoserver.echoserver.svc.cluster.local
+  exportTo:
+  - "."
+  gateways:
+  - mesh
+  - istio-ingress/eastwestgateway
+  http:
+  - match:
+    - gateways: # All requests from within this mesh should go to the EgressGateway.local
+      - mesh
+      uri:
+        prefix: /
+  route:
+    - destination:
+      host: eastwestgateway.istio-ingress.svc.cluster.local
+  - match:
+    - gateways: # All requests from below EgressGateway.local should go to the external endpoint defined in ServiceEntry
+      - "istio-system/istio-egressgateway"
+      uri:
+        prefix: "/"
+  route:
+    - destination:
+      host: "echoserver.echoserver.svc.cluster.local" # The external service endpoint specified in ServiceEntry
+      subset: "http-egress-subset"
+      port:
+        number: 443
